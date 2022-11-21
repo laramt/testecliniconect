@@ -13,10 +13,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.clinoconect.clinica.enums.Sexo;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	@Entity
 	public class Paciente {
 
@@ -26,16 +32,19 @@ import lombok.Data;
 		private String nome;
 		private Sexo sexo;
 		@ManyToMany
+		@JsonIgnore
 		private List<Endereco> endereco;
 		@Column(nullable = false, unique = true)
 		private String cpf;
-		@Column(nullable = false, unique = true)
+		@Column(nullable = false)
 		private String celular;
+		@JsonFormat(pattern =  "dd/MM/yyyy")
 		private LocalDate dataDeNascimento;
-		@Column(nullable = false, unique = true)
+		@Column(nullable = false)
 		private String email;
 		@OneToMany
 		@JoinTable(name = "paciente_consulta")
+		@JsonIgnore
 		private List<Consulta> consulta;
 	
 }
