@@ -1,6 +1,7 @@
 package com.clinoconect.clinica.resources;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.clinoconect.clinica.models.Endereco;
 import com.clinoconect.clinica.models.Paciente;
 import com.clinoconect.clinica.services.PacienteService;
 
@@ -55,6 +57,21 @@ public class PacienteController {
 		return ResponseEntity.created(uri).body(paciente);
 
 	}
+	
+	@PostMapping("/{pacienteId}/endereco")
+		public ResponseEntity<Object> insertEndereco(@RequestBody Endereco endereco,@PathVariable Long pacienteId){
+			pacienteService.insertEndereco(endereco, pacienteId);
+			
+			return ResponseEntity.created(null).body(endereco);
+		}
+	
+	@GetMapping("/{pacienteId}/enderecos")
+	public ResponseEntity<List<Endereco>> findAllEnderecos (@PathVariable Long pacienteId){
+		
+		
+		return ResponseEntity.ok().body(pacienteService.findAllEnderecosById(pacienteId));
+	
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> findById(@PathVariable Long id) {
@@ -71,6 +88,7 @@ public class PacienteController {
 	public ResponseEntity<Page<Paciente>> findAll(Pageable pageable) {
 		return ResponseEntity.ok().body(pacienteService.findsAll(pageable));
 	}
+
 
 	@GetMapping("/pacientes/nome")
 	public ResponseEntity<Page<Paciente>> findByNome(@RequestParam String nome, Pageable pageable) {
@@ -118,4 +136,6 @@ public class PacienteController {
 		//paciente = pacienteService.update(paciente);
 		return ResponseEntity.ok().body(paciente);
 	}
+	
+	
 }
