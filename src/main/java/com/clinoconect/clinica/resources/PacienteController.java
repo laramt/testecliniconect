@@ -37,18 +37,17 @@ public class PacienteController {
 	public ResponseEntity<Object> save(@RequestBody Paciente paciente) {
 
 		// verifica campos nulos
-		if(paciente.getCpf() == null || paciente.getEmail() == null) {
+		if(paciente.getCpf() == null || paciente.getEmail() == null) 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse campo não pode ser vazio");
-		}
 		
 		// verifica paciente com o email e cpf já existem
-		if (pacienteService.existsByEmail(paciente.getEmail())) {
+		if (pacienteService.existsByEmail(paciente.getEmail())) 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Paciente com esse email já existe.");
-		}
+		
 
-		if (pacienteService.existsByCpf(paciente.getCpf())) {
+		if (pacienteService.existsByCpf(paciente.getCpf())) 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Paciente com esse CPF já existe.");
-		}
+		
 
 		paciente = pacienteService.save(paciente);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(paciente.getId())
@@ -76,9 +75,9 @@ public class PacienteController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> findById(@PathVariable Long id) {
 		Optional<Paciente> paciente = pacienteService.findById(id);
-		if (!paciente.isPresent()) {
+		if (!paciente.isPresent()) 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
-		}
+		
 
 		return ResponseEntity.status(HttpStatus.OK).body(paciente);
 
@@ -118,9 +117,9 @@ public class PacienteController {
 	public ResponseEntity<Object> delete(@PathVariable Long id) {
 		// verifica se paciente existe
 		Optional<Paciente> paciente = pacienteService.findById(id);
-		if (!paciente.isPresent()) {
+		if (!paciente.isPresent()) 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
-		}
+		
 
 		pacienteService.delete(id);
 
@@ -130,9 +129,9 @@ public class PacienteController {
 	@PutMapping("/update/{id}")
 	public ResponseEntity<Object> updates(@PathVariable Long id, @RequestBody Paciente paciente) {
 		Optional<Paciente> pacienteOptional = pacienteService.findById(id);
-		if (!pacienteOptional.isPresent()) {
+		if (!pacienteOptional.isPresent()) 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
-		}
+		
 		paciente = pacienteService.update(id, paciente);
 		return ResponseEntity.ok().body(paciente);
 	}

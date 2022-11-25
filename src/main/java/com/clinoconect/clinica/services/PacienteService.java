@@ -31,6 +31,9 @@ public class PacienteService {
 	@Transactional
 	public Paciente save(Paciente paciente) {
 
+		//if ()
+		//pacienteRepository.existsByCpf(paciente.getCpf());
+		
 		// verifica formato email
 		String email = paciente.getEmail();
 		Pattern patternEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");

@@ -9,6 +9,6 @@ import com.clinoconect.clinica.models.Endereco;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Long>{
 
-	public List<Endereco> findAllByPacienteId(@Param(value = "id") Long id);
+	public List<Endereco> findAllByPacienteId(Long id);
 	
 }
