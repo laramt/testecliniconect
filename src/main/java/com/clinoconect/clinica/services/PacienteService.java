@@ -24,7 +24,7 @@ public class PacienteService {
 
 	@Autowired
 	PacienteRepository pacienteRepository;
-	
+
 	@Autowired
 	EnderecoRepository enderecoRepository;
 
@@ -56,27 +56,35 @@ public class PacienteService {
 
 		return pacienteRepository.save(paciente);
 	}
+	
+	public Paciente update(Long id, Paciente paciente) {
+		Paciente pac = pacienteRepository.getById(id);
+		
+		pac.setNome(paciente.getNome());
+		pac.setEmail(paciente.getEmail());
+		pac.setSexo(paciente.getSexo());
+		pac.setCpf(paciente.getCpf());
+		pac.setCelular(paciente.getCelular());
+		pac.setDataDeNascimento(paciente.getDataDeNascimento());
+		
+		return pacienteRepository.save(pac);
+	}
 
 	public Endereco insertEndereco(Endereco endereco, Long pacienteId) {
-
-		//pacienteId = endereco.getPaciente().getId();
 		Paciente paciente = pacienteRepository.getById(pacienteId);
 		endereco.setPaciente(paciente);
 		paciente.getEndereco().add(endereco);
-		
+
 		return enderecoRepository.save(endereco);
 	}
-	
-	public List<Endereco> findAllEnderecosById(Long pacienteId){
-		
+
+	public List<Endereco> findAllEnderecosById(Long pacienteId) {
 		List<Endereco> list = enderecoRepository.findAllByPacienteId(pacienteId);
-		
 		return list;
 	}
 
 	@Transactional
 	public void delete(Long id) {
-
 		pacienteRepository.deleteById(id);
 	}
 

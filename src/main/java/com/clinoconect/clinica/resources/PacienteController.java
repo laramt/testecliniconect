@@ -133,7 +133,7 @@ public class PacienteController {
 		if (!pacienteOptional.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
 		}
-		//paciente = pacienteService.update(paciente);
+		paciente = pacienteService.update(id, paciente);
 		return ResponseEntity.ok().body(paciente);
 	}
 	
