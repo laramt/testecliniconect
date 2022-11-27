@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.clinoconect.clinica.exeptions.ResourceNotFoundException;
 import com.clinoconect.clinica.models.Endereco;
 import com.clinoconect.clinica.models.Paciente;
 import com.clinoconect.clinica.services.PacienteService;
@@ -40,15 +41,6 @@ public class PacienteController {
 		if(paciente.getCpf() == null || paciente.getEmail() == null) 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse campo não pode ser vazio");
 		
-		// verifica paciente com o email e cpf já existem
-		if (pacienteService.existsByEmail(paciente.getEmail())) 
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Paciente com esse email já existe.");
-		
-
-		if (pacienteService.existsByCpf(paciente.getCpf())) 
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Paciente com esse CPF já existe.");
-		
-
 		paciente = pacienteService.save(paciente);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(paciente.getId())
 				.toUri();
@@ -60,25 +52,20 @@ public class PacienteController {
 	@PostMapping("/{pacienteId}/endereco")
 		public ResponseEntity<Object> insertEndereco(@RequestBody Endereco endereco,@PathVariable Long pacienteId){
 			pacienteService.insertEndereco(endereco, pacienteId);
-			
 			return ResponseEntity.created(null).body(endereco);
 		}
 	
 	@GetMapping("/{pacienteId}/enderecos")
 	public ResponseEntity<List<Endereco>> findAllEnderecos (@PathVariable Long pacienteId){
-		
-		
 		return ResponseEntity.ok().body(pacienteService.findAllEnderecosById(pacienteId));
 	
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> findById(@PathVariable Long id) {
-		Optional<Paciente> paciente = pacienteService.findById(id);
-		if (!paciente.isPresent()) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+		Paciente paciente = pacienteService.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Paciente não existe com id: " + id));
 		
-
 		return ResponseEntity.status(HttpStatus.OK).body(paciente);
 
 	}
@@ -91,7 +78,6 @@ public class PacienteController {
 
 	@GetMapping("/pacientes/nome")
 	public ResponseEntity<Page<Paciente>> findByNome(@RequestParam String nome, Pageable pageable) {
-
 		Page<Paciente> pacientes = pacienteService.findByNome(nome, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(pacientes);
 
@@ -99,7 +85,6 @@ public class PacienteController {
 
 	@GetMapping("/pacientes/email")
 	public ResponseEntity<Page<Paciente>> findByEmail(@RequestParam String email, Pageable pageable) {
-
 		Page<Paciente> pacientes = pacienteService.findByEmail(email, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(pacientes);
 
@@ -107,7 +92,6 @@ public class PacienteController {
 
 	@GetMapping("/pacientes/cpf")
 	public ResponseEntity<Page<Paciente>> findByCpf(@RequestParam String cpf, Pageable pageable) {
-
 		Page<Paciente> pacientes = pacienteService.findByCpf(cpf, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(pacientes);
 
@@ -116,21 +100,18 @@ public class PacienteController {
 	@DeleteMapping("/excluir/{id}")
 	public ResponseEntity<Object> delete(@PathVariable Long id) {
 		// verifica se paciente existe
-		Optional<Paciente> paciente = pacienteService.findById(id);
-		if (!paciente.isPresent()) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+		Paciente paciente = pacienteService.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Paciente não existe com id: " + id));
 		
-
 		pacienteService.delete(id);
-
 		return ResponseEntity.ok().body("Paciente excluido com sucesso");
 	}
 
 	@PutMapping("/update/{id}")
 	public ResponseEntity<Object> updates(@PathVariable Long id, @RequestBody Paciente paciente) {
-		Optional<Paciente> pacienteOptional = pacienteService.findById(id);
-		if (!pacienteOptional.isPresent()) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+		paciente = pacienteService.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Paciente não existe com id: " + id));
+		
 		
 		paciente = pacienteService.update(id, paciente);
 		return ResponseEntity.ok().body(paciente);

@@ -30,20 +30,24 @@ public class PacienteService {
 
 	@Transactional
 	public Paciente save(Paciente paciente) {
-
-		//if ()
-		//pacienteRepository.existsByCpf(paciente.getCpf());
 		
-		// verifica formato email
+		// verifica email
 		String email = paciente.getEmail();
+		if(!pacienteRepository.existsByEmail(email)) {
+			throw new RuntimeException("Email já existe.");
+		}
+		
 		Pattern patternEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 		Matcher matcherEmail = patternEmail.matcher(email);
 		if (!matcherEmail.matches()) {
 			throw new RuntimeException("Formato invalido de email.");
 		}
 
-		// verifica formato cpf
+		// verifica cpf
 		String cpf = paciente.getCpf();
+		if(!pacienteRepository.existsByCpf(cpf)) {
+			throw new RuntimeException("Cpf já existe.");
+		}
 		Pattern patternCpf = Pattern.compile("^\\d{3}\\x2E\\d{3}\\x2E\\d{3}\\x2D\\d{2}$");
 		Matcher matcherCpf = patternCpf.matcher(cpf);
 		if (!matcherCpf.matches()) {
@@ -109,14 +113,6 @@ public class PacienteService {
 
 	public Page<Paciente> findByCpf(String cpf, Pageable pageable) {
 		return pacienteRepository.findByCpf(cpf, pageable);
-	}
-
-	public boolean existsByEmail(String email) {
-		return pacienteRepository.existsByEmail(email);
-	}
-
-	public boolean existsByCpf(String cpf) {
-		return pacienteRepository.existsByCpf(cpf);
 	}
 
 }
